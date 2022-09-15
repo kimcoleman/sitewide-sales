@@ -353,7 +353,14 @@ class SWSales_MetaBoxes {
 			$cur_sale->load_sitewide_sale( $post->ID );
 		}
 
-		$pages        = get_pages( array( 'post_status' => 'publish,draft' ) );
+		$landing_page_types = apply_filters(
+			'swsales_landing_page_types',
+			array(
+				'page' => __( 'Page', 'sitewide-sales' ),
+				'category' => __( 'Category', 'sitewide-sales' )
+			)
+		);
+		$current_sale_landing_page_type = $cur_sale->get_landing_page_type();
 		$current_page = $cur_sale->get_landing_page_post_id();
 		$landing_template = $cur_sale->get_landing_page_template();
 		?>
@@ -361,11 +368,23 @@ class SWSales_MetaBoxes {
 		<table class="form-table">
 			<tbody>
 				<tr>
+					<th><label for="swsales_landing_page_post_id"><?php esc_html_e( 'Landing Page Type', 'sitewide-sales' ); ?></label></th>
+					<td>
+						<select class="landing_page_type swsales_option" id="swsales_landing_page_type_select" name="swsales_landing_page_type">
+							<option value="0"><?php esc_html_e( '- No Landing Page -', 'sitewide-sales' ); ?></option>
+							<?php foreach( $landing_page_types as $landing_page_type => $landing_page_type_label ) { ?>
+								<option value="<?php echo esc_attr( $landing_page_type ); ?>"<?php selected( $current_sale_landing_page_type, esc_html( $landing_page_type ) ); ?>><?php echo esc_html( $landing_page_type_label ); ?></option>
+							<?php } ?>
+						</select>
+					</td>
+				</tr>
+				<tr>
 					<th><label for="swsales_landing_page_post_id"><?php esc_html_e( 'Landing Page', 'sitewide-sales' ); ?></label></th>
 					<td>
 						<select class="landing_page_select swsales_option" id="swsales_landing_page_select" name="swsales_landing_page_post_id">
 							<option value="0"><?php esc_html_e( '- No Landing Page -', 'sitewide-sales' ); ?></option>
 							<?php
+							$pages = get_pages( array( 'post_status' => 'publish,draft' ) );
 							$page_found = false;
 							foreach ( $pages as $page ) {
 								$selected_modifier = '';
@@ -385,7 +404,7 @@ class SWSales_MetaBoxes {
 
 						<?php
 							$current_page_post = get_post( $current_page );
-						if ( ! empty( $current_page_post->post_content ) && strpos( $current_page_post->post_content, '[sitewides_sale' ) !== false ) {
+						if ( ! empty( $current_page_post->post_content ) && strpos( $current_page_post->post_content, '[sitewide_sale' ) !== false ) {
 							$show_shortcode_warning = false;
 						} else {
 							$show_shortcode_warning = true;
@@ -709,6 +728,10 @@ class SWSales_MetaBoxes {
 
 		if ( isset( $_POST['swsales_automatic_discount'] ) ) {
 			update_post_meta( $post_id, 'swsales_automatic_discount', sanitize_text_field( $_POST['swsales_automatic_discount'] ) );
+		}
+
+		if ( isset( $_POST['swsales_landing_page_type'] ) ) {
+			update_post_meta( $post_id, 'swsales_landing_page_type', sanitize_text_field( $_POST['swsales_landing_page_type'] ) );
 		}
 
 		if ( ! empty( $_POST['swsales_landing_page_post_id'] ) ) {

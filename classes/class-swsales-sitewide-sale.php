@@ -50,6 +50,7 @@ class SWSales_Sitewide_Sale {
 			'swsales_end_date'              => $this->get_end_date( 'Y-m-d H:i:s' ),
 			'swsales_sale_type'             => $this->get_sale_type(),
 			'swsales_automatic_discount'    => $this->get_automatic_discount(),
+			'swsales_landing_page_type'		=> $this->get_landing_page_type(),
 			'swsales_landing_page_post_id'  => $this->get_landing_page_post_id(),
 			'swsales_landing_page_template' => $this->get_landing_page_template(),
 			'swsales_pre_sale_content'      => $this->get_pre_sale_content(),
@@ -312,6 +313,20 @@ class SWSales_Sitewide_Sale {
 				return ( $this->is_running() && isset( $_COOKIE[ $cookie_name ] ) && false !== strpos( $_COOKIE[ $cookie_name ], ';1' ) );
 			default:
 				return false;
+		}
+	}
+
+	/**
+	 * Returns the type of sale landing page (post, page, category, etc.)
+	 * or 0 if it is not set.
+	 *
+	 * @return int
+	 */
+	public function get_landing_page_type() {
+		if ( isset( $this->post_meta['swsales_landing_page_type'] ) ) {
+			return $this->post_meta['swsales_landing_page_type'];
+		} else {
+			return 'page';
 		}
 	}
 

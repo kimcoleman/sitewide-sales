@@ -25,6 +25,9 @@ class SWSales_Module_WC {
 			return;
 		}
 
+		// Add landing page types to Edit Sitewide Sale page.
+		add_filter( 'swsales_landing_page_types', array( __CLASS__, 'landing_page_types' ) );
+
 		// Enable saving of fields added above.
 		add_action( 'swsales_save_metaboxes', array( __CLASS__, 'save_metaboxes' ), 10, 2 );
 
@@ -142,6 +145,18 @@ class SWSales_Module_WC {
 				</tr>
 		<?php
 	} // end add_choose_coupon()
+
+	/**
+	 * Adds WC module landing page types.
+	 *
+	 * @param  array $landing_page_types that are registered in SWSales.
+	 * @return array
+	 */
+	public static function landing_page_types( $landing_page_types ) {
+		$landing_page_types['product'] = __( 'Single Product', 'sitewide-sales' );
+		$landing_page_types['product_cat'] = __( 'Product Category', 'sitewide-sales' );
+		return $landing_page_types;
+	}
 
 	/**
 	 * Saves WC module fields when saving Sitewide Sale.
